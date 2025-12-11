@@ -1,0 +1,90 @@
+---
+import Layout from "../../components/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await project.render();
+---
+
+<Layout
+  title={`${project.data.title} — Adithya Automations`}
+  description={project.data.summary}
+>
+  <main class="container section">
+    <div class="section-header">
+      <p class="section-label">Project</p>
+      <h1>{project.data.title}</h1>
+      <p class="lead">{project.data.summary}</p>
+    </div>
+
+    <div class="card">
+      <table class="meta-table">
+        <tr>
+          <td><strong>Status</strong></td>
+          <td>{project.data.status}</td>
+        </tr>
+        <tr>
+          <td><strong>Difficulty</strong></td>
+          <td>{project.data.difficulty}</td>
+        </tr>
+        {project.data.context ? (
+          <tr>
+            <td><strong>Context</strong></td>
+            <td>{project.data.context}</td>
+          </tr>
+        ) : null}
+        {project.data.role ? (
+          <tr>
+            <td><strong>Role</strong></td>
+            <td>{project.data.role}</td>
+          </tr>
+        ) : null}
+        <tr>
+          <td><strong>Problem</strong></td>
+          <td>{project.data.problem}</td>
+        </tr>
+        <tr>
+          <td><strong>Solution</strong></td>
+          <td>{project.data.solution}</td>
+        </tr>
+        <tr>
+          <td><strong>Tags</strong></td>
+          <td>
+            <div class="tags">
+              {project.data.tags.map((tag) => (
+                <span class="tag muted">{tag}</span>
+              ))}
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Tech</strong></td>
+          <td>
+            <div class="tags">
+              {project.data.tech.map((item) => (
+                <span class="tag">{item}</span>
+              ))}
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <article class="section">
+      <Content />
+    </article>
+
+    <div class="line"></div>
+    <div class="small">
+      <a class="inline-link" href="/projects">← Back to projects</a>
+    </div>
+  </main>
+</Layout>

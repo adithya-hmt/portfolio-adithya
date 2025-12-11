@@ -1,0 +1,55 @@
+---
+import Layout from "../components/Layout.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("notes")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+---
+
+<Layout title="Notes — Quick technical writeups" description="Short technical notes from Adithya S on Linux, AI, and automation.">
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Notes</p>
+      <h1>Short technical writeups</h1>
+      <p class="lead">
+        Fast notes on Linux setups, AI experiments, and how I structure tools. Kept short so they are easy to reuse.
+      </p>
+    </header>
+
+    <div class="grid grid-2">
+      {entries.map((entry) => (
+        <article class="card window">
+          <div class="window-chrome">
+            <div class="window-dots" aria-hidden="true">
+              <span class="window-dot red"></span>
+              <span class="window-dot amber"></span>
+              <span class="window-dot green"></span>
+            </div>
+            <div class="window-label">notes/{entry.slug}</div>
+          </div>
+          <div class="window-body">
+            <div class="card-top">
+              <p class="muted small">{formatDate(entry.data.date)}</p>
+              <div class="tags">
+                {entry.data.tags.map((tag) => (
+                  <span class="tag muted">{tag}</span>
+                ))}
+              </div>
+            </div>
+            <h3 style="margin-bottom: 0.3rem;">{entry.data.title}</h3>
+            <p class="muted">{entry.data.summary}</p>
+            <a class="inline-link" href={`/notes/${entry.slug}/`}>Open note →</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+</Layout>

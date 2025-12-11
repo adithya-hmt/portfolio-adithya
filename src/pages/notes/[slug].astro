@@ -1,0 +1,45 @@
+---
+import Layout from "../../components/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("notes");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const formattedDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+}).format(entry.data.date);
+---
+
+<Layout title={`${entry.data.title} — Notes`} description={entry.data.summary}>
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Notes</p>
+      <h1>{entry.data.title}</h1>
+      <p class="muted">{formattedDate}</p>
+      <div class="tags">
+        {entry.data.tags.map((tag) => (
+          <span class="tag muted">{tag}</span>
+        ))}
+      </div>
+      <p class="lead">{entry.data.summary}</p>
+    </header>
+
+    <article class="section">
+      <Content />
+    </article>
+
+    <div class="line"></div>
+    <div class="small">
+      <a class="inline-link" href="/notes">← Back to notes</a>
+    </div>
+  </main>
+</Layout>

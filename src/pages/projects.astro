@@ -1,0 +1,59 @@
+---
+import Layout from "../components/Layout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99)
+);
+
+const tags = Array.from(new Set(projects.flatMap((project) => project.data.tags)));
+const tagGroups = tags.map((tag) => ({
+  tag,
+  items: projects.filter((project) => project.data.tags.includes(tag)),
+}));
+---
+
+<Layout
+  title="Projects — Adithya Automations"
+  description="Case studies on automation, AI workflows, and systems work by Adithya S."
+>
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Projects</p>
+      <h1>Case studies</h1>
+      <p class="lead">
+        Real builds that mix automation, AI workflows, and systems thinking. Grouped by tag so you can scan what matters.
+      </p>
+    </header>
+
+    {tagGroups.map((group) => (
+      <section class="section" id={`tag-${group.tag}`}>
+        <div class="card" style="margin-bottom: 1rem;">
+          <div class="card-top">
+            <div class="tags">
+              <span class="tag">{group.tag}</span>
+            </div>
+            <span class="badge muted">{group.items.length} piece{group.items.length === 1 ? "" : "s"}</span>
+          </div>
+          <p class="muted small">Projects tagged with {group.tag}.</p>
+        </div>
+        <div class="grid grid-2">
+          {group.items.map((project) => (
+            <ProjectCard
+              title={project.data.title}
+              summary={project.data.summary}
+              status={project.data.status}
+              difficulty={project.data.difficulty}
+              tags={project.data.tags}
+              tech={project.data.tech}
+              problem={project.data.problem}
+              solution={project.data.solution}
+              href={`/projects/${project.slug}/`}
+            />
+          ))}
+        </div>
+      </section>
+    ))}
+  </main>
+</Layout>

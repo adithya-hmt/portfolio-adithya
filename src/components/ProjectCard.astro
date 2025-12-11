@@ -1,0 +1,62 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  status: string;
+  difficulty: string;
+  tech: string[];
+  tags: string[];
+  href: string;
+  problem?: string;
+  solution?: string;
+}
+
+const { title, summary, status, difficulty, tech, tags, href, problem, solution } = Astro.props as Props;
+---
+
+<article class="card window">
+  <div class="window-chrome">
+    <div class="window-dots" aria-hidden="true">
+      <span class="window-dot red"></span>
+      <span class="window-dot amber"></span>
+      <span class="window-dot green"></span>
+    </div>
+    <div class="window-label">{tags[0] ?? "project"}</div>
+  </div>
+
+  <div class="window-body">
+    <div class="card-top">
+      <div class="tags">
+        {tags.map((tag) => (
+          <span class="tag muted">{tag}</span>
+        ))}
+      </div>
+      <div class="status-group">
+        <span class="badge">{status}</span>
+        <span class="badge muted">{difficulty}</span>
+      </div>
+    </div>
+
+    <h3>{title}</h3>
+    <p class="muted">{summary}</p>
+
+    {problem && solution ? (
+      <div class="list-stack micro">
+        <div><strong>Problem:</strong> {problem}</div>
+        <div><strong>Solution:</strong> {solution}</div>
+      </div>
+    ) : null}
+
+    <div class="meta-row">
+      <div class="tags" aria-label="Tech stack">
+        {tech.map((item) => (
+          <span class="tag">{item}</span>
+        ))}
+      </div>
+    </div>
+
+    <div style="margin-top: 0.8rem;">
+      <a class="inline-link" href={href}>Read case study →</a>
+    </div>
+  </div>
+</article>

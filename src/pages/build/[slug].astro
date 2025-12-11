@@ -1,0 +1,46 @@
+---
+import Layout from "../../components/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("build");
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const formattedDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(
+  entry.data.date
+);
+---
+
+<Layout title={`${entry.data.title} — Build log`} description={entry.data.summary ?? entry.data.title}>
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Build log</p>
+      <h1>{entry.data.title}</h1>
+      <p class="muted">{formattedDate}</p>
+      {entry.data.summary ? <p class="lead">{entry.data.summary}</p> : null}
+      {entry.data.tags?.length ? (
+        <div class="tags">
+          {entry.data.tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      ) : null}
+      <p class="muted small">Sections: What I worked on · What broke · What shipped · What’s next.</p>
+    </header>
+
+    <article class="section">
+      <Content />
+    </article>
+
+    <div class="line"></div>
+    <div class="small">
+      <a class="inline-link" href="/build">← Back to build log</a>
+    </div>
+  </main>
+</Layout>

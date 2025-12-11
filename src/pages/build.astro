@@ -1,0 +1,46 @@
+---
+import Layout from "../components/Layout.astro";
+import BuildEntryPreview from "../components/BuildEntryPreview.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("build")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+---
+
+<Layout
+  title="Build Log — Adithya Automations"
+  description="Build-in-public log for Adithya Automations."
+>
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Build log</p>
+      <h1>Shipping in public</h1>
+      <p class="lead">
+        Quick notes on what I’m building, what broke, and what’s next. Each entry follows the same structure so it’s easy to
+        scan.
+      </p>
+    </header>
+
+    <div class="grid grid-2">
+      {entries.map((entry) => {
+        const summary =
+          entry.data.summary ??
+          entry.body
+            .split("\n")
+            .map((line) => line.trim())
+            .find((line) => line.length > 0) ??
+          "";
+        return (
+          <BuildEntryPreview
+            title={entry.data.title}
+            date={entry.data.date}
+            summary={summary}
+            tags={entry.data.tags}
+            href={`/build/${entry.slug}/`}
+          />
+        );
+      })}
+    </div>
+  </main>
+</Layout>

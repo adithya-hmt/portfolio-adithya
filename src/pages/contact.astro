@@ -1,0 +1,63 @@
+---
+import Layout from "../components/Layout.astro";
+---
+
+<Layout
+  title="Contact — Adithya Automations"
+  description="Reach out to Adithya S about automation, AI workflows, or Linux-first tooling."
+>
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Contact</p>
+      <h1>Say hello</h1>
+      <p class="lead">
+        Students, solo founders, and small teams who want to automate a workflow or test a lightweight AI idea—email me.
+      </p>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Good fits</h3>
+        <ul>
+          <li>Recurring tasks that should be scripted instead of repeated.</li>
+          <li>Small AI assists (STT, TTS, prompts) that stay close to the CLI.</li>
+          <li>Linux/WSL2 setups that need to be reliable for shipping and study.</li>
+        </ul>
+        <div class="contact-block" style="margin-top: 1rem;">
+          <strong>Email</strong>
+          <div>founder@mail.adhithya.com</div>
+          <div class="muted small">Share the workflow, what slows you down, and what a simple win would look like.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Quick form</h3>
+        <p class="muted small">
+          Endpoint intentionally left blank—add your provider URL (Formspree, Basin, etc.) when you want submissions.
+        </p>
+        <form class="form" method="POST" action="">
+          <div>
+            <label for="name">Name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required />
+          </div>
+          <div>
+            <label for="message">What do you want to automate?</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="4"
+              placeholder="Describe the workflow and what better looks like."
+              required
+            ></textarea>
+          </div>
+          <button type="submit">Send message</button>
+          <small>You can also email me directly if you prefer.</small>
+        </form>
+      </div>
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,65 @@
+---
+import Layout from "../components/Layout.astro";
+import { getCollection } from "astro:content";
+
+const entries = (await getCollection("lab")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+---
+
+<Layout title="Lab — AI experiments" description="AI/LLM experiments, tools, and notes by Adithya S.">
+  <main class="container section">
+    <header class="section-header">
+      <p class="section-label">Lab</p>
+      <h1>AI / LLM experiments</h1>
+      <p class="lead">
+        Small tests, tools, and evaluations. Honest notes on what works, what fails, and what I would change next.
+      </p>
+    </header>
+
+    <div class="grid grid-2">
+      {entries.map((entry) => (
+        <article class="card window">
+          <div class="window-chrome">
+            <div class="window-dots" aria-hidden="true">
+              <span class="window-dot red"></span>
+              <span class="window-dot amber"></span>
+              <span class="window-dot green"></span>
+            </div>
+            <div class="window-label">lab/{entry.slug}</div>
+          </div>
+          <div class="window-body">
+            <div class="card-top">
+              <span class="badge">{entry.data.type}</span>
+              <span class="badge muted">{formatDate(entry.data.date)}</span>
+            </div>
+            <h3>{entry.data.title}</h3>
+            <p class="muted">{entry.data.summary}</p>
+            <div class="tags">
+              {entry.data.stack.map((item) => (
+                <span class="tag">{item}</span>
+              ))}
+            </div>
+            {entry.data.tags?.length ? (
+              <div class="tags" style="margin-top: 0.35rem;">
+                {entry.data.tags.map((tag) => (
+                  <span class="tag muted">{tag}</span>
+                ))}
+              </div>
+            ) : null}
+            <div style="margin-top: 0.8rem;">
+              <a class="inline-link" href={`/lab/${entry.slug}/`}>Open lab note →</a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </main>
+</Layout>

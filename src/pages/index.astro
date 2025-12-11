@@ -1,0 +1,185 @@
+---
+import Layout from "../components/Layout.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import BuildEntryPreview from "../components/BuildEntryPreview.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects"))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99))
+  .slice(0, 4);
+
+const buildEntries = (await getCollection("build")).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+
+const buildPreviews = buildEntries.slice(0, 3).map((entry) => {
+  const summary =
+    entry.data.summary ??
+    entry.body
+      .split("\n")
+      .map((line) => line.trim())
+      .find((line) => line.length > 0) ??
+    "";
+  return {
+    title: entry.data.title,
+    date: entry.data.date,
+    summary,
+    tags: entry.data.tags,
+    href: `/build/${entry.slug}/`,
+  };
+});
+
+const labEntries = (await getCollection("lab"))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const formatDate = (date: Date) =>
+  new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+---
+
+<Layout
+  title="Adithya S — AI-native automation engineer"
+  description="Adithya S builds small, fast tools, automations, and AI-assisted workflows on top of Linux, Python, and the CLI."
+>
+  <main>
+    <section class="hero container">
+      <div class="kicker">Adithya Automations · adhithya.com</div>
+      <h1>Adithya S</h1>
+      <p class="hero-sub">19-year-old founder & automation engineer.</p>
+      <p class="lead">
+        I build small, fast tools, automations, and AI-assisted workflows on top of Linux, Python, and the
+        CLI.
+      </p>
+
+      <div class="card window">
+        <div class="window-chrome">
+          <div class="window-dots" aria-hidden="true">
+            <span class="window-dot red"></span>
+            <span class="window-dot amber"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div class="window-label">~/now.txt</div>
+        </div>
+        <div class="window-body">
+          <h3 style="margin-bottom: 0.6rem;">Now</h3>
+          <ul class="bullet-list">
+            <li><span class="bullet-dot"></span>Building Adithya Automations as a lean studio for automation and AI tooling.</li>
+            <li><span class="bullet-dot"></span>Running STT + LLM experiments to keep workflows local-first and reliable.</li>
+            <li><span class="bullet-dot"></span>Refining my Linux/WSL2 setup so rebuilds and dev environments stay predictable.</li>
+            <li><span class="bullet-dot"></span>Documenting small systems and study OS experiments for other students.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container" id="projects">
+      <div class="section-header">
+        <p class="section-label">Selected Work</p>
+        <h2>AI, automation, and systems I’m building</h2>
+        <p class="muted">
+          Case studies that show how I approach small tools, reliable workflows, and AI-assisted systems.
+        </p>
+      </div>
+      <div class="grid grid-2">
+        {projects.map((project) => (
+          <ProjectCard
+            title={project.data.title}
+            summary={project.data.summary}
+            status={project.data.status}
+            difficulty={project.data.difficulty}
+            tags={project.data.tags}
+            tech={project.data.tech}
+            problem={project.data.problem}
+            solution={project.data.solution}
+            href={`/projects/${project.slug}/`}
+          />
+        ))}
+      </div>
+      <div style="margin-top: 1.1rem;">
+        <a class="inline-link" href="/projects">View all projects →</a>
+      </div>
+    </section>
+
+    <section class="section container" id="lab">
+      <div class="section-header">
+        <p class="section-label">AI / Lab Highlights</p>
+        <h2>Small experiments and tools</h2>
+        <p class="muted">Quick write-ups on local STT, LLM prompts, and automation tests.</p>
+      </div>
+      <div class="grid grid-2">
+        {labEntries.map((entry) => (
+          <article class="card window">
+            <div class="window-chrome">
+              <div class="window-dots" aria-hidden="true">
+                <span class="window-dot red"></span>
+                <span class="window-dot amber"></span>
+                <span class="window-dot green"></span>
+              </div>
+              <div class="window-label">lab/{entry.slug}</div>
+            </div>
+            <div class="window-body">
+              <div class="card-top">
+                <span class="badge">{entry.data.type}</span>
+                <span class="badge muted">{formatDate(entry.data.date)}</span>
+              </div>
+              <h3>{entry.data.title}</h3>
+              <p class="muted">{entry.data.summary}</p>
+              <div class="tags">
+                {entry.data.stack.map((item) => (
+                  <span class="tag">{item}</span>
+                ))}
+              </div>
+              <div style="margin-top: 0.8rem;">
+                <a class="inline-link" href={`/lab/${entry.slug}/`}>Read the lab note →</a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div style="margin-top: 1rem;">
+        <a class="inline-link" href="/lab">See all lab entries →</a>
+      </div>
+    </section>
+
+    <section class="section container" id="build">
+      <div class="section-header">
+        <p class="section-label">Build Log</p>
+        <h2>Recent updates</h2>
+        <p class="muted">Building in public, keeping the loops small.</p>
+      </div>
+      <div class="grid">
+        {buildPreviews.map((entry) => (
+          <BuildEntryPreview
+            title={entry.title}
+            date={entry.date}
+            summary={entry.summary}
+            tags={entry.tags}
+            href={entry.href}
+          />
+        ))}
+      </div>
+      <div style="margin-top: 1.1rem;">
+        <a class="inline-link" href="/build">Read the full log →</a>
+      </div>
+    </section>
+
+    <section class="section container" id="contact">
+      <div class="section-header">
+        <p class="section-label">Contact</p>
+        <h2>Let’s automate something small</h2>
+        <p class="muted">
+          If you’re a student, solo founder, or small team and want to automate a workflow or test a lightweight AI idea, send
+          me a note.
+        </p>
+      </div>
+      <div class="contact-block">
+        <div><strong>Email:</strong> founder@mail.adhithya.com</div>
+        <div class="muted">Tell me the workflow, what slows you down, and what “better” looks like.</div>
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -1,0 +1,38 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  summary: string;
+  href: string;
+  tags?: string[];
+}
+
+const { title, date, summary, href, tags = [] } = Astro.props as Props;
+const formattedDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(date);
+---
+
+<article class="card window">
+  <div class="window-chrome">
+    <div class="window-dots" aria-hidden="true">
+      <span class="window-dot red"></span>
+      <span class="window-dot amber"></span>
+      <span class="window-dot green"></span>
+    </div>
+    <div class="window-label">build/{formattedDate}</div>
+  </div>
+  <div class="window-body">
+    <div class="card-top">
+      <p class="muted small">{formattedDate}</p>
+      {tags.length ? (
+        <div class="tags">
+          {tags.map((tag) => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+    <h3>{title}</h3>
+    <p class="muted">{summary}</p>
+    <a class="inline-link" href={href}>Read more →</a>
+  </div>
+</article>
